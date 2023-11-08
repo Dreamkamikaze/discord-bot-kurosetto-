@@ -39,6 +39,8 @@ module.exports = {
       const shoes = db.prepare(getShoesStatement).all(interaction.user.id);
       let random3 = Math.floor(Math.random()*shoes.length);
 
+      ///Esta parte la puedotransformar en funcion//
+
       const camisa = shirts[random1];
       const pantalones = pants[random2];
       const zapatos = shoes[random3];

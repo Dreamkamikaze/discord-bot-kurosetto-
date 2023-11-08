@@ -14,10 +14,15 @@ module.exports = {
       SELECT cloth FROM clothes
       WHERE user_id = ?
       `;
+      const getIdStatment = `
+      SELECT clothes_id FROM clothes
+      WHERE user_id = ?
+      `;
 
       const clothes = db.prepare(getClothesStatement).all(interaction.user.id);
-      const ropas = clothes[contador];
+      let ropas = clothes[contador];
       /////
+
 
       ///Botones que hacen cosas
       const dlt = new ButtonBuilder()
@@ -32,7 +37,7 @@ module.exports = {
 
       const row = new ActionRowBuilder()
         .addComponents( dlt, next);
-      ///
+        ///
       const response = await interaction.reply({
         content: ropas.cloth,
         components: [row],
@@ -42,16 +47,22 @@ module.exports = {
       collector.on('collect', async i => {
         if (i.customId === 'next') {
           contador += 1;
-          console.log(contador);
           let next = clothes[contador];
+          if (contador >= clothes.length) {
+            return await i.update({ content: 'Ya no hay mas ropa', components: [], ephemeral:true });
+          }
           return await i.update({ content: next.cloth, components: [row], ephemeral:true });
         }
         else if (i.customId === 'dlt') {
+          const id = db.prepare(getIdStatment).all(interaction.user.id);
+          let pruebaId= id[contador];
+
           const borrar = `
-          DELETE FROM clothes
-          WHERE clothes_id = ?
+          DELETE FROM clothes WHERE clothes_id  = ?
           `;
-          db.prepare(borrar).run(contador);
+          db.prepare(borrar).run(pruebaId.clothes_id);
+
+
           return await i.update({ content: 'Ropa borrada', components: [], ephemeral:true });
         }
       });

@@ -51,6 +51,7 @@ module.exports = {
 
     } catch (error){
       console.log(error);
+      await interaction.reply('No se han encontrado una o mas ropas');
     }
   },
 };
